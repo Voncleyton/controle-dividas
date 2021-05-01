@@ -1,54 +1,44 @@
 import React, { FormEvent, useState } from 'react';
-import {debitsApi} from '../../services/api';
-import { Form } from './styles';
+import Form from './styles';
 import IUser from '../../types/user';
+import Modal from '../Modal';
+import IDebt from '../../types/debts';
 
 interface IModalAddDebtProps {
+  buttonsEnabled: boolean;
+  isOpen: boolean;
+  toglleModal: () => void;
+  handleAddDebt: (debit: Omit<IDebt, '_id' | 'criado'>) => Promise<void>;
   users: IUser[];
 }
 
 interface IFormData {
-  idUsuario: number,
-  motivo: string,
-  valor: number
+  idUsuario: number;
+  motivo: string;
+  valor: number;
 }
 
-const ModalAddDebt: React.FC<IModalAddDebtProps> = ({users}) => {
+const ModalAddDebt: React.FC<IModalAddDebtProps> = ({
+  buttonsEnabled,
+  isOpen,
+  toglleModal,
+  users,
+  handleAddDebt,
+}) => {
   const [user, setUser] = useState(0);
   const [reason, setReason] = useState('');
   const [amount, setAmount] = useState(0);
 
-  const handleChange =  (event: any): void => {
-    const { target } = event;
-    const value = target.value;
-    const name = target.name;
-
-
-    switch (name) {
-      case 'user':
-        setUser(parseInt(value));
-        break;
-      case 'reason':
-        setReason(value);
-        break;
-      case 'amount':
-        setAmount(parseFloat(value));
-        break;  
-      default:
-        break;
-    }
-  }
-
-  const HandleValidation = (formData: IFormData): Boolean => {
+  const handleValidation = (formData: IFormData): boolean => {
     if (formData.idUsuario === 0) {
       alert('Por favor, informe um cliente válido!');
       return false;
-    };
-    
+    }
+
     if (formData.motivo === '') {
       alert('Por favor, informe o motivo da dívida!');
       return false;
-    };
+    }
 
     if (formData.valor <= 0) {
       alert('Por favor, informe um valor maior que Zero!');
@@ -56,77 +46,100 @@ const ModalAddDebt: React.FC<IModalAddDebtProps> = ({users}) => {
     }
 
     return true;
-  }
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => { 
-    event.preventDefault();   
-    
-    const body = {
-      "idUsuario": user,
-      "motivo": reason,
-      "valor": amount
-    };
-    
-    HandleValidation(body);
-
-    //Chamada API
-    await debitsApi.post('/', body);
-
-    clearFields();
-  }
+  };
 
   const clearFields = () => {
     setUser(0);
     setReason('');
-    setAmount(0);    
-  }
+    setAmount(0);
+  };
+
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
+    event.preventDefault();
+
+    try {
+      const newDebt = {
+        idUsuario: user,
+        motivo: reason,
+        valor: amount,
+      };
+
+      if (!handleValidation(newDebt)) {
+        return;
+      }
+
+      // Chamada API
+      await handleAddDebt(newDebt);
+
+      clearFields();
+
+      // toglleModal();
+    } catch (error) {
+      alert(
+        `Ocorreu algum erro ao tentar gravar a dívida. \n ${error.message}`,
+      );
+    }
+  };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <h1>Nova Dívida</h1>
-      
-      <span>Cliente:</span>
-      <select 
-        name="user" 
-        id="user"
-        value={user}
-        onChange={handleChange}
-      >
-        <option value={0}> - </option>  
-        {users.map(user => (
-          <option key={user.id} value={user.id}>{user.name}</option>
-        ))}
-      </select>
+    <Modal isOpen={isOpen} toglleModal={toglleModal}>
+      <Form buttonsEnabled={buttonsEnabled} onSubmit={handleSubmit}>
+        <h1>Nova Dívida</h1>
 
-      <br/>
+        <span>Cliente:</span>
+        <select
+          name="user"
+          id="user"
+          value={user}
+          onChange={e => setUser(parseInt(e.target.value, 10))}
+        >
+          <option value={0}> - </option>
+          {users.map(userItem => (
+            <option key={userItem.id} value={userItem.id}>
+              {userItem.name}
+            </option>
+          ))}
+        </select>
 
-      <span>Motivo:</span>
-      <textarea 
-        name="reason" 
-        id="reason" 
-        value={reason}
-        onChange={handleChange}>
-      </textarea>
+        <br />
 
-      <br/>
+        <span>Motivo:</span>
+        <textarea
+          name="reason"
+          id="reason"
+          value={reason}
+          onChange={e => setReason(e.target.value)}
+        />
 
-      <span>Valor:</span>
-      <input 
-        type= "number" 
-        name="amount" 
-        id="amount"
-        value={amount}
-        onChange={handleChange} 
-        data-type="currency"
-      />  
+        <br />
 
-      <br/><br/>    
+        <span>Valor:</span>
+        <input
+          type="number"
+          name="amount"
+          id="amount"
+          value={amount}
+          onChange={e => setAmount(parseFloat(e.target.value))}
+          data-type="currency"
+        />
 
-      <button type="submit">
-        <p className="text">Adicionar Dívida</p>
-      </button>
-    </Form>
+        <br />
+        <br />
+
+        <div className="buttonsContainer">
+          <button type="button" className="cancelButton" onClick={toglleModal}>
+            <p className="text">Cancelar</p>
+          </button>
+
+          <button type="submit" className="addButton">
+            <p className="text">Salvar</p>
+          </button>
+        </div>
+      </Form>
+    </Modal>
   );
-}
+};
 
 export default ModalAddDebt;

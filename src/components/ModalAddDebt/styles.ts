@@ -1,10 +1,20 @@
-import styled from "styled-components";
+import styled, { css } from 'styled-components';
 
-export const Form = styled.form`
-  background-color: #F0F0F5;
+interface IFormProps {
+  buttonsEnabled: boolean;
+}
+
+const Form = styled.form<IFormProps>`
+  background-color: #f0f0f5;
   padding: 48px 40px;
   display: flex;
   flex-direction: column;
+
+  ${props =>
+    !props.buttonsEnabled &&
+    css`
+      pointer-events: none;
+    `}
 
   h1 {
     font-weight: 600;
@@ -12,11 +22,6 @@ export const Form = styled.form`
     line-height: 36px;
     margin-bottom: 40px;
     color: #333;
-  }
-
-  button {
-    margin-top: 48px;
-    align-self: flex-end;
   }
 
   select {
@@ -33,7 +38,7 @@ export const Form = styled.form`
     -moz-appearance: none;
   }
 
-  textarea{
+  textarea {
     resize: none;
     background: #fff;
     border-radius: 8px;
@@ -55,24 +60,44 @@ export const Form = styled.form`
     border: none;
   }
 
-  span{
+  span {
     color: #333;
     margin-bottom: 5px;
   }
 
+  .buttonsContainer {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   button {
+    margin-top: 48px;
+    //align-self: flex-end;
     font-weight: 600;
     border-radius: 8px;
     border: 0;
-    background: #5CA753;
     color: #fff;
-
+    min-width: 170px;
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
 
     .text {
       padding: 16px 24px;
     }
   }
+
+  .addButton {
+    background: #5ca753;
+  }
+
+  .cancelButton {
+    background: #cc0033;
+  }
 `;
+
+export default Form;
