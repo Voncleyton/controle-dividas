@@ -9,13 +9,12 @@ export default createGlobalStyle`
   }
 
   body {
-    background: #fff;
-    color: #FFF;
+    background: #151C4E;
     -webkit-font-smoothing: antialiased;
   }
 
   body, input, button {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Ubuntu', sans-serif;
     font-size: 16px;
   }
 
@@ -25,5 +24,10 @@ export default createGlobalStyle`
 
   button {
     cursor: pointer;
+  }
+
+  #root {
+    //max-width: 1080px;
+    //margin: 0 auto;
   }
 `;

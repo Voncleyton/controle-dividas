@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import {debitsApi} from '../../services/api';
 import { Form } from './styles';
 import IUser from '../../types/user';
@@ -58,7 +58,7 @@ const ModalAddDebt: React.FC<IModalAddDebtProps> = ({users}) => {
     return true;
   }
 
-  const handleSubmit = async (event: any): Promise<void> => { 
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => { 
     event.preventDefault();   
     
     const body = {
