@@ -72,6 +72,11 @@ const Form = styled.form<IFormProps>`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+
+    @media (max-width: 465px) {
+      flex-direction: column;
+      justify-content: space-between;
+    }
   }
 
   button {

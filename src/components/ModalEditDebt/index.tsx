@@ -87,13 +87,7 @@ const ModalEditDebt: React.FC<IModalEditDebtProps> = ({
         <h1>Nova Dívida</h1>
 
         <span>Cliente:</span>
-        <select
-          name="user"
-          id="user"
-          value={user.id}
-          defaultValue={user.id}
-          disabled
-        >
+        <select name="user" id="user" defaultValue={user.id} disabled>
           <option key={user.id} value={user.id}>
             {user.name}
           </option>

@@ -90,6 +90,11 @@ const ModalAddDebt: React.FC<IModalAddDebtProps> = ({
     }
   };
 
+  const handleCancel = (): void => {
+    clearFields();
+    toglleModal();
+  };
+
   return (
     <Modal isOpen={isOpen} toglleModal={toglleModal}>
       <Form buttonsEnabled={buttonsEnabled} onSubmit={handleSubmit}>
@@ -137,7 +142,7 @@ const ModalAddDebt: React.FC<IModalAddDebtProps> = ({
         <br />
 
         <div className="buttonsContainer">
-          <button type="button" className="cancelButton" onClick={toglleModal}>
+          <button type="button" className="cancelButton" onClick={handleCancel}>
             <p className="text">Cancelar</p>
           </button>
 
