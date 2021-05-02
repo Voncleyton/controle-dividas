@@ -1,6 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
 import React, { useEffect, useState } from 'react';
-import { FiXCircle } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import ModalAddDebt from '../../components/ModalAddDebt';
@@ -11,8 +10,9 @@ import formatValue from '../../utils/formatValue';
 import IDebt from '../../types/debts';
 import IUser from '../../types/user';
 
-import { Container, Header, UsersList, ListItem } from './styles';
+import { Container, Header, UsersList } from './styles';
 import ToastConfig from '../../configs/ToastConfig';
+import ListItem from '../../components/ListItem';
 
 interface IDebtsAPIResponse {
   result: IDebt[];
@@ -125,10 +125,10 @@ const Dashboard: React.FC = () => {
         setClickEnabled(true);
       });
 
-      toast.success('Dívida editada com sucesso!', ToastConfig);
+      toast.success('Dívidas excluídas com sucesso!', ToastConfig);
     } catch (error) {
       toast.error(
-        `Ocorreu algum erro ao tentar editar a dívida. ${error.message} `,
+        `Ocorreu algum erro ao tentar excluir a dívidas. ${error.message} `,
         ToastConfig,
       );
     }
@@ -160,8 +160,14 @@ const Dashboard: React.FC = () => {
       </Header>
       <UsersList>
         {usersWithDebtsList.map(user => (
-          <ListItem key={user.id} enabled={clickEnabled}>
+          <ListItem
+            key={user.id}
+            id={user.id}
+            enabled={clickEnabled}
+            onDelete={handleDeleteUsersDebts}
+          >
             <Link
+              className="listItemCotent"
               to={{
                 pathname: '/details',
                 state: user,
@@ -172,13 +178,6 @@ const Dashboard: React.FC = () => {
               <span>{`${user.countOfDebts} dívida(s) cadastrada(s),
                   totalizando ${formatValue(user.amountOfDebts)}`}</span>
             </Link>
-
-            <button
-              type="button"
-              onClick={() => handleDeleteUsersDebts(user.id)}
-            >
-              <FiXCircle size="30" />
-            </button>
           </ListItem>
         ))}
       </UsersList>

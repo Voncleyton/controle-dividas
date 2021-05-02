@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { FiXCircle, FiChevronLeft } from 'react-icons/fi';
 import { Link, useLocation } from 'react-router-dom';
 
 import { toast } from 'react-toastify';
+import { FiChevronLeft } from 'react-icons/fi';
 import formatValue from '../../utils/formatValue';
 
 import IDebt from '../../types/debts';
@@ -12,7 +12,6 @@ import {
   Container,
   Header,
   DebtsList,
-  ListItem,
   UserInfo,
   ListItemContent,
 } from './styles';
@@ -20,6 +19,7 @@ import formatDate from '../../utils/formatDate';
 import { debtsApi } from '../../services/api';
 import ModalEditDebt from '../../components/ModalEditDebt';
 import ToastConfig from '../../configs/ToastConfig';
+import ListItem from '../../components/ListItem';
 
 interface IDebtsAPIResponse {
   result: IDebt[];
@@ -101,10 +101,10 @@ const DebtsDetails: React.FC = () => {
 
       setClickEnabled(true);
 
-      toast.success('Dívida editada com sucesso!', ToastConfig);
+      toast.success('Dívida excluída com sucesso!', ToastConfig);
     } catch (error) {
       toast.error(
-        `Ocorreu algum erro ao tentar editar a dívida. ${error.message} `,
+        `Ocorreu algum erro ao tentar excluir a dívida. ${error.message} `,
         ToastConfig,
       );
     }
@@ -147,48 +147,50 @@ const DebtsDetails: React.FC = () => {
         </Link>
         <h1>Detalhes</h1>
       </Header>
-      <UserInfo>
-        <strong>{user.name}</strong>
-        <span>{`Telefone: ${user.phone}`}</span>
-        <span>
-          {`${user.countOfDebts} dívida(s) cadastrada(s),
+      {user && (
+        <>
+          <UserInfo>
+            <strong>{user.name}</strong>
+            <span>{`Telefone: ${user.phone}`}</span>
+            <span>
+              {`${user.countOfDebts} dívida(s) cadastrada(s),
                   totalizando ${formatValue(user.amountOfDebts)}`}
-        </span>
-      </UserInfo>
+            </span>
+          </UserInfo>
 
-      <DebtsList>
-        {usersDebts.map(debt => (
-          <ListItem key={debt._id} enabled={clickEnabled}>
-            <ListItemContent
-              className="content"
-              type="button"
-              onClick={() => {
-                handleSelectClickedDebt(debt._id);
-              }}
-            >
-              <div className="horizontalContent">
-                <strong>Data:</strong>
-                <span>{formatDate(new Date(debt.criado))}</span>
-              </div>
-              <div className="horizontalContent">
-                <strong>Valor:</strong>
-                <span>{formatValue(debt.valor)}</span>
-              </div>
-              <div className="horizontalContent">
-                <strong>Motivo:</strong>
-                <span>{debt.motivo}</span>
-              </div>
-            </ListItemContent>
-            <button
-              className="deleteButton"
-              type="button"
-              onClick={() => handleDeleteDebt(debt._id)}
-            >
-              <FiXCircle size="30" />
-            </button>
-          </ListItem>
-        ))}
-      </DebtsList>
+          <DebtsList>
+            {usersDebts.map(debt => (
+              <ListItem
+                key={debt._id}
+                id={debt._id}
+                enabled={clickEnabled}
+                onDelete={handleDeleteDebt}
+              >
+                <ListItemContent
+                  className="content"
+                  type="button"
+                  onClick={() => {
+                    handleSelectClickedDebt(debt._id);
+                  }}
+                >
+                  <div className="horizontalContent">
+                    <strong>Data:</strong>
+                    <span>{formatDate(new Date(debt.criado))}</span>
+                  </div>
+                  <div className="horizontalContent">
+                    <strong>Valor:</strong>
+                    <span>{formatValue(debt.valor)}</span>
+                  </div>
+                  <div className="horizontalContent">
+                    <strong>Motivo:</strong>
+                    <span>{debt.motivo}</span>
+                  </div>
+                </ListItemContent>
+              </ListItem>
+            ))}
+          </DebtsList>
+        </>
+      )}
     </Container>
   );
 };
