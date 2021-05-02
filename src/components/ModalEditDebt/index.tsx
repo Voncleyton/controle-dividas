@@ -39,7 +39,7 @@ const ModalEditDebt: React.FC<IModalEditDebtProps> = ({
 
   useEffect(() => {
     setEditedDebt(debt);
-  }, [debt]);
+  }, [debt, isOpen]);
 
   const handleValidation = (formData: IFormData): string => {
     if (formData.motivo === '') {
@@ -123,7 +123,7 @@ const ModalEditDebt: React.FC<IModalEditDebtProps> = ({
               valor: parseFloat(e.target.value),
             }))
           }
-          data-type="currency"
+          step=".01"
         />
 
         <br />

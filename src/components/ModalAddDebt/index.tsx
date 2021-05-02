@@ -135,7 +135,7 @@ const ModalAddDebt: React.FC<IModalAddDebtProps> = ({
           value={amount}
           min={0}
           onChange={e => setAmount(parseFloat(e.target.value))}
-          data-type="currency"
+          step=".01"
         />
 
         <br />
