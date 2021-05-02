@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import { shade } from 'polished';
 
 interface IListItemProps {
   enabled: boolean;
@@ -27,38 +26,46 @@ export const Header = styled.header`
   font-size: 30px;
   letter-spacing: -0.88px;
 
-  button {
-    width: 200px;
-    height: 50px;
+  h1 {
+    flex: 1;
+    justify-self: center;
+  }
 
-    background-color: #0c9;
+  a {
+    display: flex;
+    text-decoration: none;
     font-weight: bold;
     color: #fff;
-    border-radius: 25px;
-    text-align: center;
     border: none;
-    padding: 5px;
+    align-items: center;
+    justify-content: center;
 
     @media (hover: hover) {
       transition: background-color 0.3s;
 
       &:hover {
-        background-color: ${shade(0.3, '#0C9')};
+        color: #0c9;
       }
-    }
-  }
-
-  @media (max-width: 520px) {
-    flex-direction: column;
-    justify-content: flex-end;
-    button {
-      width: 100%;
-      margin-top: 15px;
     }
   }
 `;
 
-export const UsersList = styled.div`
+export const UserInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+
+  color: #ffff;
+
+  strong {
+    font-weight: bold;
+    font-size: 32px;
+  }
+`;
+
+export const DebtsList = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -82,25 +89,7 @@ export const ListItem = styled.div<IListItemProps>`
       pointer-events: none;
     `}
 
-  a {
-    text-decoration: none;
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    padding: 15px;
-    color: #000;
-
-    strong {
-      color: #333;
-      font-weight: bold;
-    }
-
-    span {
-      color: #777;
-    }
-  }
-
-  button {
+  button.deleteButton {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -128,5 +117,46 @@ export const ListItem = styled.div<IListItemProps>`
     &:hover {
       transform: translatex(10px);
     }
+  }
+`;
+
+export const ListItemContent = styled.button`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  border: none;
+
+  padding: 15px;
+  background-color: transparent;
+  strong {
+    color: #333;
+    font-weight: bold;
+  }
+
+  span {
+    color: #777;
+    word-break: break-all;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
+
+  strong + span {
+    margin-left: 5px;
+  }
+
+  span + strong {
+    margin-left: 20px;
+  }
+
+  div {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
   }
 `;

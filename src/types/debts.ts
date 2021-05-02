@@ -3,5 +3,5 @@ export default interface IDebt {
   motivo: string;
   valor: number;
   idUsuario: number;
-  criado: Date;
+  criado: string;
 }

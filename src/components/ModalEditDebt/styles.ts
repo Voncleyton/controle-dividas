@@ -76,6 +76,7 @@ const Form = styled.form<IFormProps>`
 
   button {
     margin-top: 48px;
+    //align-self: flex-end;
     font-weight: 600;
     border-radius: 8px;
     border: 0;

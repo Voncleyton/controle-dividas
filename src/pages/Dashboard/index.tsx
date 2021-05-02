@@ -1,9 +1,10 @@
 import axios, { AxiosInstance } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FiXCircle } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import ModalAddDebt from '../../components/ModalAddDebt';
 
-import { debitsApi, usersApi } from '../../services/api';
+import { debtsApi, usersApi } from '../../services/api';
 import formatValue from '../../utils/formatValue';
 
 import IDebt from '../../types/debts';
@@ -35,7 +36,7 @@ const Dashboard: React.FC = () => {
   };
 
   const getDebts = async (): Promise<void> => {
-    const debtsData = await debitsApi.get<IDebtsAPIResponse>('');
+    const debtsData = await debtsApi.get<IDebtsAPIResponse>('');
 
     setDebts(debtsData.data.result);
   };
@@ -85,17 +86,17 @@ const Dashboard: React.FC = () => {
   }, [debts, usersList]);
 
   const handleAddDebt = async (
-    debit: Omit<IDebt, '_id' | 'criado'>,
+    debt: Omit<IDebt, '_id' | 'criado'>,
   ): Promise<void> => {
     setClickEnabled(false);
 
-    await debitsApi.post('/', debit);
+    await debtsApi.post('/', debt);
 
     getDebts();
     setClickEnabled(true);
   };
 
-  const handleDeleteUsersDebits = async (userId: number): Promise<void> => {
+  const handleDeleteUsersDebts = async (userId: number): Promise<void> => {
     setClickEnabled(false);
 
     const deleteRequests: Promise<AxiosInstance>[] = [];
@@ -103,7 +104,7 @@ const Dashboard: React.FC = () => {
     debts.forEach(
       async (debt): Promise<void> => {
         if (debt.idUsuario === userId) {
-          deleteRequests.push(debitsApi.delete(`/${debt._id}`));
+          deleteRequests.push(debtsApi.delete(`/${debt._id}`));
         }
       },
     );
@@ -136,16 +137,21 @@ const Dashboard: React.FC = () => {
       <UsersList>
         {usersWithDebtsList.map(user => (
           <ListItem key={user.id} enabled={clickEnabled}>
-            <a href="/">
+            <Link
+              to={{
+                pathname: '/details',
+                state: user,
+              }}
+            >
               <strong>{user.name}</strong>
               <span>{`Telefone: ${user.phone}`}</span>
               <span>{`${user.countOfDebts} dívida(s) cadastrada(s),
                   totalizando ${formatValue(user.amountOfDebts)}`}</span>
-            </a>
+            </Link>
 
             <button
               type="button"
-              onClick={() => handleDeleteUsersDebits(user.id)}
+              onClick={() => handleDeleteUsersDebts(user.id)}
             >
               <FiXCircle size="30" />
             </button>
