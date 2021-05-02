@@ -1,11 +1,14 @@
 import React, { FormEvent, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import Form from './styles';
 import IUser from '../../types/user';
 import Modal from '../Modal';
 import IDebt from '../../types/debts';
+import ToastConfig from '../../configs/ToastConfig';
 
 interface IModalEditDebtProps {
   buttonsEnabled: boolean;
+  setButtonEnabled: (enabled: boolean) => void;
   isOpen: boolean;
   toglleModal: () => void;
   handleEditDebt: (
@@ -24,6 +27,7 @@ interface IFormData {
 
 const ModalEditDebt: React.FC<IModalEditDebtProps> = ({
   buttonsEnabled = false,
+  setButtonEnabled,
   isOpen,
   toglleModal,
   user,
@@ -37,18 +41,16 @@ const ModalEditDebt: React.FC<IModalEditDebtProps> = ({
     setEditedDebt(debt);
   }, [debt]);
 
-  const handleValidation = (formData: IFormData): boolean => {
+  const handleValidation = (formData: IFormData): string => {
     if (formData.motivo === '') {
-      alert('Por favor, informe o motivo da dívida!');
-      return false;
+      return 'Por favor, informe o motivo da dívida!';
     }
 
     if (formData.valor <= 0) {
-      alert('Por favor, informe um valor maior que Zero!');
-      return false;
+      return 'Por favor, informe um valor maior que Zero!';
     }
 
-    return true;
+    return '';
   };
 
   const handleSubmit = async (
@@ -57,7 +59,9 @@ const ModalEditDebt: React.FC<IModalEditDebtProps> = ({
     event.preventDefault();
 
     try {
-      if (!handleValidation(editedDebt)) {
+      const errorMessage = handleValidation(editedDebt);
+      if (errorMessage) {
+        toast.error(errorMessage, ToastConfig);
         return;
       }
 
@@ -65,10 +69,15 @@ const ModalEditDebt: React.FC<IModalEditDebtProps> = ({
       await handleEditDebt(editedDebt, debtID);
 
       toglleModal();
+
+      toast.success('Dívida editada com sucesso!', ToastConfig);
     } catch (error) {
-      alert(
-        `Ocorreu algum erro ao tentar editar a dívida. \n ${error.message}`,
+      toast.error(
+        `Ocorreu algum erro ao tentar editar a dívida. ${error.message} `,
+        ToastConfig,
       );
+
+      setButtonEnabled(true);
     }
   };
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FiXCircle, FiChevronLeft } from 'react-icons/fi';
 import { Link, useLocation } from 'react-router-dom';
 
+import { toast } from 'react-toastify';
 import formatValue from '../../utils/formatValue';
 
 import IDebt from '../../types/debts';
@@ -18,6 +19,7 @@ import {
 import formatDate from '../../utils/formatDate';
 import { debtsApi } from '../../services/api';
 import ModalEditDebt from '../../components/ModalEditDebt';
+import ToastConfig from '../../configs/ToastConfig';
 
 interface IDebtsAPIResponse {
   result: IDebt[];
@@ -85,12 +87,27 @@ const DebtsDetails: React.FC = () => {
   };
 
   const handleDeleteDebt = async (debtId: string): Promise<void> => {
-    setClickEnabled(false);
+    try {
+      const confirm = window.confirm('Deseja realmente excluir esta dívida?');
 
-    await debtsApi.delete(`/${debtId}`);
-    getUsersDebts();
+      if (!confirm) {
+        return;
+      }
 
-    setClickEnabled(true);
+      setClickEnabled(false);
+
+      await debtsApi.delete(`/${debtId}`);
+      getUsersDebts();
+
+      setClickEnabled(true);
+
+      toast.success('Dívida editada com sucesso!', ToastConfig);
+    } catch (error) {
+      toast.error(
+        `Ocorreu algum erro ao tentar editar a dívida. ${error.message} `,
+        ToastConfig,
+      );
+    }
   };
 
   const toglleModal = (): void => {
@@ -106,11 +123,16 @@ const DebtsDetails: React.FC = () => {
     toglleModal();
   };
 
+  const setButtonEnabled = (enabled: boolean) => {
+    setClickEnabled(enabled);
+  };
+
   return (
     <Container>
       {clickedDebtId && (
         <ModalEditDebt
           buttonsEnabled={clickEnabled}
+          setButtonEnabled={setButtonEnabled}
           isOpen={modalOpen}
           toglleModal={toglleModal}
           user={user}

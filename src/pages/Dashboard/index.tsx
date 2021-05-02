@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FiXCircle } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import ModalAddDebt from '../../components/ModalAddDebt';
 
 import { debtsApi, usersApi } from '../../services/api';
@@ -11,6 +12,7 @@ import IDebt from '../../types/debts';
 import IUser from '../../types/user';
 
 import { Container, Header, UsersList, ListItem } from './styles';
+import ToastConfig from '../../configs/ToastConfig';
 
 interface IDebtsAPIResponse {
   result: IDebt[];
@@ -97,32 +99,54 @@ const Dashboard: React.FC = () => {
   };
 
   const handleDeleteUsersDebts = async (userId: number): Promise<void> => {
-    setClickEnabled(false);
+    try {
+      const confirm = window.confirm(
+        'Deseja realmente excluir todas as dívidas deste cliente?',
+      );
 
-    const deleteRequests: Promise<AxiosInstance>[] = [];
+      if (!confirm) {
+        return;
+      }
 
-    debts.forEach(
-      async (debt): Promise<void> => {
-        if (debt.idUsuario === userId) {
-          deleteRequests.push(debtsApi.delete(`/${debt._id}`));
-        }
-      },
-    );
+      setClickEnabled(false);
 
-    axios.all(deleteRequests).then(() => {
-      getDebts();
-      setClickEnabled(true);
-    });
+      const deleteRequests: Promise<AxiosInstance>[] = [];
+
+      debts.forEach(
+        async (debt): Promise<void> => {
+          if (debt.idUsuario === userId) {
+            deleteRequests.push(debtsApi.delete(`/${debt._id}`));
+          }
+        },
+      );
+
+      axios.all(deleteRequests).then(() => {
+        getDebts();
+        setClickEnabled(true);
+      });
+
+      toast.success('Dívida editada com sucesso!', ToastConfig);
+    } catch (error) {
+      toast.error(
+        `Ocorreu algum erro ao tentar editar a dívida. ${error.message} `,
+        ToastConfig,
+      );
+    }
   };
 
   const toglleModal = (): void => {
     setModalOpen(!modalOpen);
   };
 
+  const setButtonEnabled = (enabled: boolean) => {
+    setClickEnabled(enabled);
+  };
+
   return (
     <Container>
       <ModalAddDebt
         buttonsEnabled={clickEnabled}
+        setButtonEnabled={setButtonEnabled}
         isOpen={modalOpen}
         toglleModal={toglleModal}
         users={usersList}

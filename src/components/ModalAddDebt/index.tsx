@@ -1,11 +1,14 @@
 import React, { FormEvent, useState } from 'react';
+import { toast } from 'react-toastify';
 import Form from './styles';
 import IUser from '../../types/user';
 import Modal from '../Modal';
 import IDebt from '../../types/debts';
+import ToastConfig from '../../configs/ToastConfig';
 
 interface IModalAddDebtProps {
   buttonsEnabled: boolean;
+  setButtonEnabled: (enabled: boolean) => void;
   isOpen: boolean;
   toglleModal: () => void;
   handleAddDebt: (debt: Omit<IDebt, '_id' | 'criado'>) => Promise<void>;
@@ -20,6 +23,7 @@ interface IFormData {
 
 const ModalAddDebt: React.FC<IModalAddDebtProps> = ({
   buttonsEnabled,
+  setButtonEnabled,
   isOpen,
   toglleModal,
   users,
@@ -29,23 +33,20 @@ const ModalAddDebt: React.FC<IModalAddDebtProps> = ({
   const [reason, setReason] = useState('');
   const [amount, setAmount] = useState(0);
 
-  const handleValidation = (formData: IFormData): boolean => {
+  const handleValidation = (formData: IFormData): string => {
     if (formData.idUsuario === 0) {
-      alert('Por favor, informe um cliente válido!');
-      return false;
+      return 'Por favor, informe um cliente válido!';
     }
 
     if (formData.motivo === '') {
-      alert('Por favor, informe o motivo da dívida!');
-      return false;
+      return 'Por favor, informe o motivo da dívida!';
     }
 
     if (formData.valor <= 0) {
-      alert('Por favor, informe um valor maior que Zero!');
-      return false;
+      return 'Por favor, informe um valor maior que Zero!';
     }
 
-    return true;
+    return '';
   };
 
   const clearFields = () => {
@@ -66,7 +67,9 @@ const ModalAddDebt: React.FC<IModalAddDebtProps> = ({
         valor: amount,
       };
 
-      if (!handleValidation(newDebt)) {
+      const errorMessage = handleValidation(newDebt);
+      if (errorMessage) {
+        toast.error(errorMessage, ToastConfig);
         return;
       }
 
@@ -75,10 +78,15 @@ const ModalAddDebt: React.FC<IModalAddDebtProps> = ({
 
       clearFields();
       toglleModal();
+
+      toast.success('Dívida cadastrada com sucesso!', ToastConfig);
     } catch (error) {
-      alert(
-        `Ocorreu algum erro ao tentar gravar a dívida. \n ${error.message}`,
+      toast.error(
+        `Ocorreu algum erro ao tentar gravar a dívida. ${error.message} `,
+        ToastConfig,
       );
+
+      setButtonEnabled(true);
     }
   };
 

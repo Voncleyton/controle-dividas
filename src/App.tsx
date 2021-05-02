@@ -1,18 +1,19 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import Dashboard from './pages/Dashboard';
+import { toast } from 'react-toastify';
 import Routes from './routes';
 import GlobalStyle from './styles/global';
+import 'react-toastify/dist/ReactToastify.css';
+
+toast.configure();
 
 const App: React.FC = () => {
   return (
-    <>
-      <BrowserRouter>
-        <Routes />
-      </BrowserRouter>
+    <BrowserRouter>
+      <Routes />
 
       <GlobalStyle />
-    </>
+    </BrowserRouter>
   );
 };
 
