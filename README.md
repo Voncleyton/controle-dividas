@@ -18,8 +18,8 @@ Tecnologias utilizadas:
 -  [axios](https://github.com/axios/axios)
 -  [ESLint](https://eslint.org/)
 -  [Prettier](https://prettier.io/)
--  [Yarn v1.22][yarn]
--  [VS Code][vc]
+-  [Yarn v1.22](https://yarnpkg.com/)
+-  [VS Code](https://code.visualstudio.com/)
 
 ## :warning: Pre requisitos
 
